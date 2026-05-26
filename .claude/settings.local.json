@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Path \"c:\\\\xampp\\\\htdocs\\\\eword\\\\src\" -Recurse -File | ForEach-Object { $_.FullName.Replace\\(\"c:\\\\xampp\\\\htdocs\\\\eword\\\\src\\\\\", \"\"\\) })",
+      "PowerShell(Get-NetTCPConnection -LocalPort 5173 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1 | ForEach-Object { \"Vite running on port 5173\" })",
+      "PowerShell(Get-NetTCPConnection -LocalPort 5173 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1 | ForEach-Object { \"OK: Vite on :5173\" })",
+      "Bash(npm install *)",
+      "Bash(npm run *)"
+    ]
+  }
+}
