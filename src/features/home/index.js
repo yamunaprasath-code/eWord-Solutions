@@ -1,0 +1,9 @@
+export { Hero }           from './Hero';
+export { GettingStarted } from './GettingStarted';
+export { ToolsSection }   from './ToolsSection';
+export { TeamSection }    from './TeamSection';
+export { TargetAudience } from './TargetAudience';
+export { ValueProp }      from './ValueProp';
+export { EmotionalAppeal } from './EmotionalAppeal';
+export { Differentiators } from './Differentiators';
+export { Services }       from './Services';
