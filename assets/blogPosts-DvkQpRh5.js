@@ -1,4 +1,4 @@
-import{d as e}from"./MainLayout-BDVDVbT6.js";var t=e(`calendar`,[[`path`,{d:`M8 2v4`,key:`1cmpym`}],[`path`,{d:`M16 2v4`,key:`4m81vk`}],[`rect`,{width:`18`,height:`18`,x:`3`,y:`4`,rx:`2`,key:`1hopcy`}],[`path`,{d:`M3 10h18`,key:`8toen8`}]]),n=[{slug:`workers-comp-records-retrieval-guide`,category:`Records Retrieval`,title:`The Complete Guide to Workers' Comp Records Retrieval`,excerpt:`Learn how to streamline subpoena management and HIPAA requests so your team spends less time chasing records and more time on cases.`,date:`May 10, 2026`,readTime:`6 min read`,body:`
+var e=[{slug:`workers-comp-records-retrieval-guide`,category:`records retrieval`,title:`The Complete Guide to Workers' Comp Records Retrieval`,excerpt:`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Boost your firm efficiency with actionable strategies. Start with one today.`,date:`May 10, 2026`,readTime:`6 min read`,gradient:`from-blue-200 via-blue-100 to-slate-100`,body:`
 Records retrieval is one of the most time-consuming tasks in any workers' comp practice.
 Between drafting subpoenas, following up with providers, and organizing what comes back,
 your team can spend dozens of hours per case on logistics alone.
@@ -20,7 +20,7 @@ organized package — ready to review or send to the medical reviewer.
 
 Faster records mean faster evaluations, faster settlements, and more capacity to
 take on new cases. When retrieval slows down, everything slows down.
-    `},{slug:`dictation-best-practices`,category:`Transcription`,title:`Dictation Best Practices for Busy Paralegals`,excerpt:`These simple habits can cut your transcription turnaround in half while improving accuracy across every document your firm produces.`,date:`April 28, 2026`,readTime:`4 min read`,body:`
+    `},{slug:`dictation-best-practices`,category:`transcription`,title:`Dictation Best Practices for Busy Paralegals`,excerpt:`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Tackle turnaround burden with simple habits. Read to see how accuracy improves workflows.`,date:`April 28, 2026`,readTime:`4 min read`,gradient:`from-teal-200 via-emerald-100 to-slate-100`,body:`
 Good dictation habits make a significant difference in turnaround time and accuracy.
 Here are the practices our transcription team sees make the biggest difference.
 
@@ -38,7 +38,7 @@ something else. This one habit alone reduces back-and-forth significantly.
 
 Background noise — even moderate office noise — adds to transcription time and
 reduces accuracy. A few seconds of setup pays off in the final document.
-    `},{slug:`medical-records-review-for-trial`,category:`Medical Records`,title:`How to Prepare Medical Records for Trial Efficiently`,excerpt:`Chronologically organized, hyperlinked PDFs aren't just nice to have — they're table stakes for competitive workers' comp litigation.`,date:`April 14, 2026`,readTime:`5 min read`,body:`
+    `},{slug:`medical-records-review-for-trial`,category:`medical records`,title:`How to Prepare Medical Records for Trial Efficiently`,excerpt:`Lorem ipsum dolor sit amet, consectetur adipiscing elit. See how organized records help your practice deliver faster results. Read the full guide.`,date:`April 14, 2026`,readTime:`5 min read`,gradient:`from-rose-200 via-pink-100 to-slate-100`,body:`
 Preparing medical records for trial is one of those tasks that looks simple on paper
 but can consume days of paralegal time when done manually.
 
@@ -58,7 +58,7 @@ cut review time by 50% or more.
 
 Duplicate pages are the enemy of a clean record set. Strip them before organizing —
 not after — to avoid re-doing work. OCR can help identify exact or near-exact duplicates.
-    `},{slug:`e-office-workflow-explained`,category:`Workflow`,title:`E-Office Workflow: From Dictation to E-Filing in One Step`,excerpt:`Discover how EWORD's end-to-end e-office workflow removes the manual handoffs that slow down your document pipeline.`,date:`March 30, 2026`,readTime:`5 min read`,body:`
+    `},{slug:`e-office-workflow-explained`,category:`workflow`,title:`E-Office Workflow: From Dictation to E-Filing in One Step`,excerpt:`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Discover how end-to-end workflow removes the manual handoffs that slow down your document pipeline.`,date:`March 30, 2026`,readTime:`5 min read`,gradient:`from-violet-200 via-purple-100 to-slate-100`,body:`
 Most law firms treat dictation, formatting, and e-filing as three separate tasks
 handled by three separate people. Each handoff is a chance for delays, dropped
 balls, or version confusion.
@@ -78,4 +78,4 @@ court, and coordinate service. The whole pipeline — one request.
 
 For firms handling 50+ active cases, the savings compound. Every document that
 flows through the pipeline without a manual step is time your team gets back.
-    `}],r=Object.fromEntries(n.map(e=>[e.slug,e]));export{r as n,t as r,n as t};
+    `}],t=Object.fromEntries(e.map(e=>[e.slug,e]));export{t as n,e as t};
