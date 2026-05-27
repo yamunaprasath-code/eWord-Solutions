@@ -1,21 +1,23 @@
 import { motion } from 'framer-motion';
-import { Building2, Handshake, Sliders } from 'lucide-react';
 
 const cards = [
   {
-    num: '01', Icon: Building2,
+    num: '01',
     title: "End-to-End Legal Support for Workers' Comp Firms",
-    description: "Most vendors offer transcription or record retrieval. EWORD Solutions delivers a complete support system — from dictation through e-filing and document service — designed specifically for the needs and pace of California workers' compensation law firms.",
+    description:
+      "Most vendors offer transcription or record retrieval. EWORD Solutions delivers a complete support system — from dictation through e-filing and document service — designed specifically for the needs and pace of California workers' compensation law firms.",
   },
   {
-    num: '02', Icon: Handshake,
+    num: '02',
     title: 'Human Service, Not Just Software',
-    description: "EWORD gives law firms a real team they can trust. Clients know their contacts by name and get quick, knowledgeable responses — not generic help desks or ticket systems.",
+    description:
+      "EWORD gives law firms a real team they can trust. Clients know their contacts by name and get quick, knowledgeable responses — not generic help desks or ticket systems.",
   },
   {
-    num: '03', Icon: Sliders,
+    num: '03',
     title: 'Flexibility and Modularity',
-    description: "Firms can pick one service or the full package. EWORD scales with your needs — whether you're handling a single letter or managing records across hundreds of cases.",
+    description:
+      "Firms can pick one service or the full package. EWORD scales with your needs — whether you're handling a single letter or managing records across hundreds of cases.",
   },
 ];
 
@@ -45,7 +47,7 @@ export default function Differentiators({
         </motion.div>
 
         <div className="flex flex-col gap-4">
-          {cards.map(({ num, Icon, title: cardTitle, description }, i) => (
+          {cards.map(({ num, title: cardTitle, description }, i) => (
             <motion.div
               key={num}
               initial={{ opacity: 0, y: 18 }}
@@ -54,9 +56,6 @@ export default function Differentiators({
               transition={{ duration: 0.45, delay: i * 0.08 }}
               className="flex items-start gap-6 bg-slate-50 rounded-2xl border border-slate-100 px-8 py-7"
             >
-              <div className="w-11 h-11 rounded-xl bg-white border border-slate-200 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
-                <Icon className="w-5 h-5 text-brand-500" strokeWidth={1.75} />
-              </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2.5 mb-2">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-brand-400">{num}</span>

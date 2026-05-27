@@ -1,14 +1,14 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence, animate } from 'framer-motion';
 import { Check, ArrowRight, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import servicesData from '@/data/services/servicesData';
 
+/* ── animated stat counter ──────────────────────────────────── */
 function AnimatedCounter({ target, suffix, trigger }) {
   const ref = useRef(null);
-
   useEffect(() => {
-    const num = parseFloat(target);
+    const num  = parseFloat(target);
     const ctrl = animate(0, num, {
       duration: 1.1,
       ease: [0.16, 1, 0.3, 1],
@@ -18,39 +18,84 @@ function AnimatedCounter({ target, suffix, trigger }) {
     });
     return () => ctrl.stop();
   }, [target, suffix, trigger]);
-
-  return (
-    <span ref={ref} className="tabular-nums">
-      0{suffix}
-    </span>
-  );
+  return <span ref={ref} className="tabular-nums">0{suffix}</span>;
 }
 
 const contentVariants = {
   initial: { opacity: 0, y: 20, filter: 'blur(4px)' },
-  animate: { opacity: 1, y: 0, filter: 'blur(0px)' },
-  exit: { opacity: 0, y: -12, filter: 'blur(4px)' },
+  animate: { opacity: 1, y: 0,  filter: 'blur(0px)' },
+  exit:    { opacity: 0, y: -12, filter: 'blur(4px)' },
 };
 
+/* ── helpers ─────────────────────────────────────────────────── */
+const NAVBAR_H = 72; // matches h-[72px] in Navbar
+
+/** Scroll so the element's top sits just below the fixed navbar */
+function scrollToElement(el) {
+  if (!el) return;
+  const top = el.getBoundingClientRect().top + window.scrollY - NAVBAR_H;
+  window.scrollTo({ top, behavior: 'smooth' });
+}
+
+/* ─────────────────────────────────────────────────────────────── */
 export default function Services({
-  badge = 'What We Do',
-  title = 'Legal Support Built for Your Workflow',
+  badge    = 'What We Do',
+  title    = 'Legal Support Built for Your Workflow',
   subtitle = 'From records retrieval to e-filing, EWORD handles the admin so your team can focus on clients and cases.',
   services = servicesData,
 }) {
   const [active, setActive] = useState(0);
-  const wrapperRef = useRef(null);
-  const activeRef = useRef(0);
-  const cooldownRef = useRef(false);
+
+  const wrapperRef     = useRef(null);
+  const activeRef      = useRef(0);
+  const cooldownRef    = useRef(false);
   const touchStartYRef = useRef(0);
   const touchPinnedRef = useRef(false);
 
   const svc = services[active];
 
-  useEffect(() => {
-    activeRef.current = active;
-  }, [active]);
+  useEffect(() => { activeRef.current = active; }, [active]);
 
+  /* ── sync scrollY so each card maps to its spot in sticky range ─ */
+  const syncScroll = useCallback((wrapper, cardIndex) => {
+    const stickyRange = wrapper.offsetHeight - window.innerHeight;
+    // card 0 → 0%, card (last) → 98% — leaves a tiny gap so one scroll exits
+    const fraction = services.length > 1
+      ? (cardIndex / (services.length - 1)) * 0.98
+      : 0;
+    window.scrollTo(0, wrapper.offsetTop + stickyRange * fraction);
+  }, [services.length]);
+
+  /* ── advance (wheel / touch / keyboard) ──────────────────────── */
+  const advance = useCallback((dir) => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper || cooldownRef.current) return;
+
+    if (dir > 0) {
+      if (activeRef.current < services.length - 1) {
+        cooldownRef.current = true;
+        setTimeout(() => { cooldownRef.current = false; }, 700);
+        const next = activeRef.current + 1;
+        setActive(next);
+        syncScroll(wrapper, next);   // keep scrollY proportional → 1 scroll to exit
+      }
+      // last card: natural scroll handled by event handlers
+    } else {
+      if (activeRef.current > 0) {
+        cooldownRef.current = true;
+        setTimeout(() => { cooldownRef.current = false; }, 700);
+        const prev = activeRef.current - 1;
+        setActive(prev);
+        syncScroll(wrapper, prev);   // same for going backwards
+      } else {
+        cooldownRef.current = true;
+        setTimeout(() => { cooldownRef.current = false; }, 1200);
+        window.scrollTo({ top: Math.max(0, wrapper.offsetTop - 1), behavior: 'smooth' });
+      }
+    }
+  }, [services.length, syncScroll]);
+
+  /* ── wheel / touch / keyboard listeners ─────────────────────── */
   useEffect(() => {
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
@@ -60,42 +105,12 @@ export default function Services({
       return r.top <= 1 && r.bottom >= window.innerHeight - 1;
     };
 
-    const advance = (dir) => {
-      if (cooldownRef.current) return;
-
-      if (dir > 0) {
-        if (activeRef.current < services.length - 1) {
-          cooldownRef.current = true;
-          setTimeout(() => {
-            cooldownRef.current = false;
-          }, 700);
-          setActive((p) => p + 1);
-        } else {
-          cooldownRef.current = true;
-          setTimeout(() => {
-            cooldownRef.current = false;
-          }, 1400);
-          window.scrollTo({ top: wrapper.offsetTop + wrapper.offsetHeight - window.innerHeight + 10, behavior: 'smooth' });
-        }
-      } else {
-        if (activeRef.current > 0) {
-          cooldownRef.current = true;
-          setTimeout(() => {
-            cooldownRef.current = false;
-          }, 700);
-          setActive((p) => p - 1);
-        } else {
-          cooldownRef.current = true;
-          setTimeout(() => {
-            cooldownRef.current = false;
-          }, 1400);
-          window.scrollTo({ top: Math.max(0, wrapper.offsetTop - 1), behavior: 'smooth' });
-        }
-      }
-    };
+    const onLast = () => activeRef.current >= services.length - 1;
 
     const handleWheel = (e) => {
       if (!isPinned()) return;
+      // Last card + scrolling forward → release lock, let page flow naturally
+      if (onLast() && e.deltaY > 0) return;
       e.preventDefault();
       advance(e.deltaY >= 0 ? 1 : -1);
     };
@@ -106,19 +121,27 @@ export default function Services({
     };
 
     const handleTouchMove = (e) => {
-      if (touchPinnedRef.current) e.preventDefault();
+      if (!touchPinnedRef.current) return;
+      // Last card + swiping up (= scrolling forward) → allow natural scroll
+      const delta = touchStartYRef.current - e.touches[0].clientY;
+      if (onLast() && delta > 0) return;
+      e.preventDefault();
     };
 
     const handleTouchEnd = (e) => {
       if (!touchPinnedRef.current) return;
       const delta = touchStartYRef.current - e.changedTouches[0].clientY;
       if (Math.abs(delta) < 40) return;
+      // Last card + swipe forward → natural scroll already started, nothing to do
+      if (onLast() && delta > 0) return;
       advance(delta > 0 ? 1 : -1);
     };
 
     const handleKeyDown = (e) => {
       if (!isPinned()) return;
       if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+        // Last card → let browser handle arrow key scroll naturally
+        if (onLast()) return;
         e.preventDefault();
         advance(1);
       }
@@ -128,25 +151,38 @@ export default function Services({
       }
     };
 
-    window.addEventListener('wheel', handleWheel, { passive: false });
-    window.addEventListener('touchstart', handleTouchStart, { passive: true });
-    window.addEventListener('touchmove', handleTouchMove, { passive: false });
-    window.addEventListener('touchend', handleTouchEnd, { passive: true });
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('wheel',      handleWheel,      { passive: false });
+    window.addEventListener('touchstart', handleTouchStart, { passive: true  });
+    window.addEventListener('touchmove',  handleTouchMove,  { passive: false });
+    window.addEventListener('touchend',   handleTouchEnd,   { passive: true  });
+    window.addEventListener('keydown',    handleKeyDown);
 
     return () => {
-      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('wheel',      handleWheel);
       window.removeEventListener('touchstart', handleTouchStart);
-      window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('touchend', handleTouchEnd);
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('touchmove',  handleTouchMove);
+      window.removeEventListener('touchend',   handleTouchEnd);
+      window.removeEventListener('keydown',    handleKeyDown);
     };
-  }, [services.length]);
+  }, [advance, services.length]);
 
+  /* ── Continue button — always jumps to next section ─────────── */
+  const scrollToNext = useCallback(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+    scrollToElement(wrapper.nextElementSibling);
+  }, []);
+
+  const isLast = active === services.length - 1;
+
+  /* ── render ──────────────────────────────────────────────────── */
   return (
     <div ref={wrapperRef} id="services" style={{ height: '200vh' }} className="relative">
       <section className="sticky top-0 h-screen overflow-hidden bg-white flex flex-col justify-center">
+
         <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full">
+
+          {/* heading */}
           <div className="text-center mb-5 md:mb-7">
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest bg-brand-50 text-brand-600 border border-brand-200 mb-3">
               {badge}
@@ -159,6 +195,7 @@ export default function Services({
             </p>
           </div>
 
+          {/* tab pills */}
           <div className="flex justify-center mb-3">
             <div className="inline-flex items-center bg-slate-100 rounded-2xl p-1.5 gap-1 flex-wrap justify-center">
               {services.map((s, i) => (
@@ -174,11 +211,7 @@ export default function Services({
                       transition={{ type: 'spring', stiffness: 420, damping: 32 }}
                     />
                   )}
-                  <span
-                    className={`relative z-10 flex items-center gap-2 transition-colors duration-150 ${
-                      active === i ? 'text-white' : 'text-slate-500 hover:text-slate-800'
-                    }`}
-                  >
+                  <span className={`relative z-10 flex items-center gap-2 transition-colors duration-150 ${active === i ? 'text-white' : 'text-slate-500 hover:text-slate-800'}`}>
                     <s.Icon className="w-4 h-4 flex-shrink-0" />
                     <span className="hidden sm:inline whitespace-nowrap">{s.tab}</span>
                   </span>
@@ -187,6 +220,7 @@ export default function Services({
             </div>
           </div>
 
+          {/* dot indicators */}
           <div className="flex justify-center mb-4">
             <div className="flex items-center gap-2">
               {services.map((_, i) => (
@@ -194,15 +228,14 @@ export default function Services({
                   key={i}
                   onClick={() => setActive(i)}
                   className={`rounded-full transition-all duration-300 ${
-                    active === i
-                      ? 'w-6 h-2 bg-brand-500'
-                      : 'w-2 h-2 bg-slate-300 hover:bg-slate-400'
+                    active === i ? 'w-6 h-2 bg-brand-500' : 'w-2 h-2 bg-slate-300 hover:bg-slate-400'
                   }`}
                 />
               ))}
             </div>
           </div>
 
+          {/* service card */}
           <AnimatePresence mode="wait">
             <motion.div
               key={active}
@@ -213,6 +246,7 @@ export default function Services({
               transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
               className="grid lg:grid-cols-[1fr_300px] gap-5 items-stretch"
             >
+              {/* left — detail panel */}
               <div className="bg-gradient-to-br from-slate-50 to-blue-50/60 rounded-2xl border border-slate-100 p-6 md:p-8 flex flex-col">
                 <div className="flex items-start justify-between mb-5">
                   <div className="flex items-center gap-3.5">
@@ -220,23 +254,15 @@ export default function Services({
                       <svc.Icon className="w-5 h-5 text-brand-600" />
                     </div>
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-widest text-brand-500 mb-0.5">
-                        {svc.tab}
-                      </p>
+                      <p className="text-xs font-bold uppercase tracking-widest text-brand-500 mb-0.5">{svc.tab}</p>
                       <p className="text-xs text-slate-400">{svc.tagline}</p>
                     </div>
                   </div>
-                  <span className="text-4xl font-display font-bold text-slate-200 leading-none select-none">
-                    {svc.num}
-                  </span>
+                  <span className="text-4xl font-display font-bold text-slate-200 leading-none select-none">{svc.num}</span>
                 </div>
 
-                <h3 className="font-display text-xl md:text-2xl font-bold text-slate-900 mb-2 leading-tight">
-                  {svc.title}
-                </h3>
-                <p className="text-slate-500 leading-relaxed mb-5 text-sm md:text-[15px]">
-                  {svc.description}
-                </p>
+                <h3 className="font-display text-xl md:text-2xl font-bold text-slate-900 mb-2 leading-tight">{svc.title}</h3>
+                <p className="text-slate-500 leading-relaxed mb-5 text-sm md:text-[15px]">{svc.description}</p>
 
                 <ul className="space-y-2 mb-6 flex-1">
                   {svc.features.map((f, i) => (
@@ -272,33 +298,23 @@ export default function Services({
                 </div>
               </div>
 
-              <div
-                className={`hidden md:flex flex-col rounded-2xl bg-gradient-to-br ${svc.color} p-7 text-white min-h-[280px] overflow-hidden relative`}
-              >
-                <div
-                  className="absolute -top-10 -right-10 w-40 h-40 rounded-full opacity-20 blur-3xl pointer-events-none"
-                  style={{ background: svc.accent }}
-                />
+              {/* right — metric card */}
+              <div className={`hidden md:flex flex-col rounded-2xl bg-gradient-to-br ${svc.color} p-7 text-white min-h-[280px] overflow-hidden relative`}>
+                <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full opacity-20 blur-3xl pointer-events-none" style={{ background: svc.accent }} />
 
                 <div className="flex items-center gap-3 mb-7 relative z-10">
                   <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center">
                     <svc.Icon className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <p className="text-[10px] text-white/40 uppercase tracking-widest mb-0.5">
-                      Service metric
-                    </p>
+                    <p className="text-[10px] text-white/40 uppercase tracking-widest mb-0.5">Service metric</p>
                     <p className="text-sm font-semibold text-white/75">{svc.tab}</p>
                   </div>
                 </div>
 
                 <div className="mb-4 relative z-10">
                   <div className="text-6xl font-display font-bold leading-none mb-1">
-                    <AnimatedCounter
-                      target={svc.stat.val}
-                      suffix={svc.stat.suffix}
-                      trigger={active}
-                    />
+                    <AnimatedCounter target={svc.stat.val} suffix={svc.stat.suffix} trigger={active} />
                   </div>
                   <p className="text-xs text-white/50 uppercase tracking-widest">{svc.stat.lbl}</p>
                 </div>
@@ -324,10 +340,7 @@ export default function Services({
                       transition={{ delay: i * 0.09 + 0.25, duration: 0.3 }}
                       className="flex items-start gap-2.5"
                     >
-                      <Check
-                        className="w-3.5 h-3.5 flex-shrink-0 mt-0.5"
-                        style={{ color: svc.accent }}
-                      />
+                      <Check className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: svc.accent }} />
                       <span className="text-xs text-white/65 leading-relaxed">{f}</span>
                     </motion.div>
                   ))}
@@ -343,20 +356,24 @@ export default function Services({
           </AnimatePresence>
         </div>
 
-        <div className="absolute bottom-5 left-0 right-0 flex justify-center pointer-events-none">
-          <motion.div
+        {/* ── scroll / continue button ──────────────────────────── */}
+        <div className="absolute bottom-5 left-0 right-0 flex justify-center">
+          <motion.button
+            onClick={scrollToNext}
             animate={{ y: [0, 5, 0] }}
             transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}
-            className="flex flex-col items-center gap-1 text-black"
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex flex-col items-center gap-1 text-slate-500 hover:text-brand-600 transition-colors cursor-pointer outline-none group"
+            aria-label="Continue to next section"
           >
-            <span className="text-[10px] font-bold tracking-widest uppercase">
-              {active < services.length - 1
-                ? `${services.length - 1 - active} more · scroll`
-                : 'scroll to continue'}
+            <span className="text-[10px] font-bold tracking-widest uppercase group-hover:text-brand-600 transition-colors">
+              {isLast ? 'Continue' : 'Skip to next'}
             </span>
             <ChevronDown className="w-4 h-4" />
-          </motion.div>
+          </motion.button>
         </div>
+
       </section>
     </div>
   );

@@ -42,7 +42,7 @@ export default function ResourcesPage() {
         <div className="absolute inset-0 bg-gradient-to-br from-brand-900/80 via-slate-900/90 to-slate-900" />
         <motion.div {...fade()} className="relative z-10 max-w-3xl mx-auto px-6 text-center">
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest bg-white/10 text-white border border-white/20 mb-6">
-            Resources
+            Guidelines
           </span>
           <h1 className="font-display text-4xl md:text-5xl font-bold text-white leading-tight mb-5">
             Resources for Legal Professionals

@@ -1,4 +1,4 @@
-import { Folder, Zap, Stethoscope, Mic } from 'lucide-react';
+import { Folder, Zap, Stethoscope, Mic, FileText, BookOpen } from 'lucide-react';
 
 export const megaServices = [
   {
@@ -31,9 +31,23 @@ export const megaServices = [
   },
 ];
 
+export const resourceLinks = [
+  {
+    name: 'Guidelines',
+    href: '/resources',
+    Icon: FileText,
+    desc: 'Free guides, templates, and checklists for legal professionals.',
+  },
+  {
+    name: 'Blog',
+    href: '/blog',
+    Icon: BookOpen,
+    desc: "Insights and how-to articles for California workers' comp firms.",
+  },
+];
+
+// Only links that are NOT dropdowns
 export const navLinks = [
-  { label: 'About',     to: '/about' },
-  { label: 'Resources', to: '/resources' },
-  { label: 'Blog',      to: '/blog' },
-  { label: 'Contact',   to: '/contact' },
+  { label: 'About',   to: '/about'   },
+  { label: 'Contact', to: '/contact' },
 ];
