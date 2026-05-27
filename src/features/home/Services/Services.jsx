@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence, animate } from "framer-motion";
-import { Check, ArrowRight, ChevronDown } from "lucide-react";
-import { Link } from "react-router-dom";
-import servicesData from "@/data/services/servicesData";
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, animate } from 'framer-motion';
+import { Check, ArrowRight, ChevronDown } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import servicesData from '@/data/services/servicesData';
 
 function AnimatedCounter({ target, suffix, trigger }) {
   const ref = useRef(null);
@@ -19,31 +19,37 @@ function AnimatedCounter({ target, suffix, trigger }) {
     return () => ctrl.stop();
   }, [target, suffix, trigger]);
 
-  return <span ref={ref} className="tabular-nums">0{suffix}</span>;
+  return (
+    <span ref={ref} className="tabular-nums">
+      0{suffix}
+    </span>
+  );
 }
 
 const contentVariants = {
-  initial: { opacity: 0, y: 20, filter: "blur(4px)" },
-  animate: { opacity: 1, y: 0,  filter: "blur(0px)" },
-  exit:    { opacity: 0, y: -12, filter: "blur(4px)" },
+  initial: { opacity: 0, y: 20, filter: 'blur(4px)' },
+  animate: { opacity: 1, y: 0, filter: 'blur(0px)' },
+  exit: { opacity: 0, y: -12, filter: 'blur(4px)' },
 };
 
 export default function Services({
-  badge    = "What We Do",
-  title    = "Legal Support Built for Your Workflow",
-  subtitle = "From records retrieval to e-filing, EWORD handles the admin so your team can focus on clients and cases.",
+  badge = 'What We Do',
+  title = 'Legal Support Built for Your Workflow',
+  subtitle = 'From records retrieval to e-filing, EWORD handles the admin so your team can focus on clients and cases.',
   services = servicesData,
 }) {
-  const [active, setActive]         = useState(0);
-  const wrapperRef                  = useRef(null);
-  const activeRef                   = useRef(0);
-  const cooldownRef                 = useRef(false);
-  const touchStartYRef              = useRef(0);
-  const touchPinnedRef              = useRef(false);
+  const [active, setActive] = useState(0);
+  const wrapperRef = useRef(null);
+  const activeRef = useRef(0);
+  const cooldownRef = useRef(false);
+  const touchStartYRef = useRef(0);
+  const touchPinnedRef = useRef(false);
 
   const svc = services[active];
 
-  useEffect(() => { activeRef.current = active; }, [active]);
+  useEffect(() => {
+    activeRef.current = active;
+  }, [active]);
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
@@ -60,22 +66,30 @@ export default function Services({
       if (dir > 0) {
         if (activeRef.current < services.length - 1) {
           cooldownRef.current = true;
-          setTimeout(() => { cooldownRef.current = false; }, 700);
+          setTimeout(() => {
+            cooldownRef.current = false;
+          }, 700);
           setActive((p) => p + 1);
         } else {
           cooldownRef.current = true;
-          setTimeout(() => { cooldownRef.current = false; }, 1400);
-          window.scrollTo({ top: wrapper.offsetTop + wrapper.offsetHeight, behavior: "smooth" });
+          setTimeout(() => {
+            cooldownRef.current = false;
+          }, 1400);
+          window.scrollTo({ top: wrapper.offsetTop + wrapper.offsetHeight - window.innerHeight + 10, behavior: 'smooth' });
         }
       } else {
         if (activeRef.current > 0) {
           cooldownRef.current = true;
-          setTimeout(() => { cooldownRef.current = false; }, 700);
+          setTimeout(() => {
+            cooldownRef.current = false;
+          }, 700);
           setActive((p) => p - 1);
         } else {
           cooldownRef.current = true;
-          setTimeout(() => { cooldownRef.current = false; }, 1400);
-          window.scrollTo({ top: Math.max(0, wrapper.offsetTop - 1), behavior: "smooth" });
+          setTimeout(() => {
+            cooldownRef.current = false;
+          }, 1400);
+          window.scrollTo({ top: Math.max(0, wrapper.offsetTop - 1), behavior: 'smooth' });
         }
       }
     };
@@ -104,30 +118,35 @@ export default function Services({
 
     const handleKeyDown = (e) => {
       if (!isPinned()) return;
-      if (e.key === "ArrowDown" || e.key === "ArrowRight") { e.preventDefault(); advance(1); }
-      if (e.key === "ArrowUp"   || e.key === "ArrowLeft")  { e.preventDefault(); advance(-1); }
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+        e.preventDefault();
+        advance(1);
+      }
+      if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        advance(-1);
+      }
     };
 
-    window.addEventListener("wheel",      handleWheel,      { passive: false });
-    window.addEventListener("touchstart", handleTouchStart, { passive: true  });
-    window.addEventListener("touchmove",  handleTouchMove,  { passive: false });
-    window.addEventListener("touchend",   handleTouchEnd,   { passive: true  });
-    window.addEventListener("keydown",    handleKeyDown);
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+    window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      window.removeEventListener("wheel",      handleWheel);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchmove",  handleTouchMove);
-      window.removeEventListener("touchend",   handleTouchEnd);
-      window.removeEventListener("keydown",    handleKeyDown);
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, [services.length]);
 
   return (
-    <div ref={wrapperRef} id="services" style={{ height: "200vh" }} className="relative">
+    <div ref={wrapperRef} id="services" style={{ height: '200vh' }} className="relative">
       <section className="sticky top-0 h-screen overflow-hidden bg-white flex flex-col justify-center">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full">
-
           <div className="text-center mb-5 md:mb-7">
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest bg-brand-50 text-brand-600 border border-brand-200 mb-3">
               {badge}
@@ -135,7 +154,9 @@ export default function Services({
             <h2 className="font-display text-3xl md:text-4xl font-bold text-slate-900 tracking-tight mb-2">
               {title}
             </h2>
-            <p className="text-slate-500 max-w-xl mx-auto text-base md:text-lg leading-relaxed">{subtitle}</p>
+            <p className="text-slate-500 max-w-xl mx-auto text-base md:text-lg leading-relaxed">
+              {subtitle}
+            </p>
           </div>
 
           <div className="flex justify-center mb-3">
@@ -150,12 +171,14 @@ export default function Services({
                     <motion.span
                       layoutId="svc-tab-pill"
                       className="absolute inset-0 rounded-xl bg-brand-500"
-                      transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                      transition={{ type: 'spring', stiffness: 420, damping: 32 }}
                     />
                   )}
-                  <span className={`relative z-10 flex items-center gap-2 transition-colors duration-150 ${
-                    active === i ? "text-white" : "text-slate-500 hover:text-slate-800"
-                  }`}>
+                  <span
+                    className={`relative z-10 flex items-center gap-2 transition-colors duration-150 ${
+                      active === i ? 'text-white' : 'text-slate-500 hover:text-slate-800'
+                    }`}
+                  >
                     <s.Icon className="w-4 h-4 flex-shrink-0" />
                     <span className="hidden sm:inline whitespace-nowrap">{s.tab}</span>
                   </span>
@@ -172,8 +195,8 @@ export default function Services({
                   onClick={() => setActive(i)}
                   className={`rounded-full transition-all duration-300 ${
                     active === i
-                      ? "w-6 h-2 bg-brand-500"
-                      : "w-2 h-2 bg-slate-300 hover:bg-slate-400"
+                      ? 'w-6 h-2 bg-brand-500'
+                      : 'w-2 h-2 bg-slate-300 hover:bg-slate-400'
                   }`}
                 />
               ))}
@@ -197,15 +220,23 @@ export default function Services({
                       <svc.Icon className="w-5 h-5 text-brand-600" />
                     </div>
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-widest text-brand-500 mb-0.5">{svc.tab}</p>
+                      <p className="text-xs font-bold uppercase tracking-widest text-brand-500 mb-0.5">
+                        {svc.tab}
+                      </p>
                       <p className="text-xs text-slate-400">{svc.tagline}</p>
                     </div>
                   </div>
-                  <span className="text-4xl font-display font-bold text-slate-200 leading-none select-none">{svc.num}</span>
+                  <span className="text-4xl font-display font-bold text-slate-200 leading-none select-none">
+                    {svc.num}
+                  </span>
                 </div>
 
-                <h3 className="font-display text-xl md:text-2xl font-bold text-slate-900 mb-2 leading-tight">{svc.title}</h3>
-                <p className="text-slate-500 leading-relaxed mb-5 text-sm md:text-[15px]">{svc.description}</p>
+                <h3 className="font-display text-xl md:text-2xl font-bold text-slate-900 mb-2 leading-tight">
+                  {svc.title}
+                </h3>
+                <p className="text-slate-500 leading-relaxed mb-5 text-sm md:text-[15px]">
+                  {svc.description}
+                </p>
 
                 <ul className="space-y-2 mb-6 flex-1">
                   {svc.features.map((f, i) => (
@@ -241,7 +272,9 @@ export default function Services({
                 </div>
               </div>
 
-              <div className={`hidden md:flex flex-col rounded-2xl bg-gradient-to-br ${svc.color} p-7 text-white min-h-[280px] overflow-hidden relative`}>
+              <div
+                className={`hidden md:flex flex-col rounded-2xl bg-gradient-to-br ${svc.color} p-7 text-white min-h-[280px] overflow-hidden relative`}
+              >
                 <div
                   className="absolute -top-10 -right-10 w-40 h-40 rounded-full opacity-20 blur-3xl pointer-events-none"
                   style={{ background: svc.accent }}
@@ -252,14 +285,20 @@ export default function Services({
                     <svc.Icon className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <p className="text-[10px] text-white/40 uppercase tracking-widest mb-0.5">Service metric</p>
+                    <p className="text-[10px] text-white/40 uppercase tracking-widest mb-0.5">
+                      Service metric
+                    </p>
                     <p className="text-sm font-semibold text-white/75">{svc.tab}</p>
                   </div>
                 </div>
 
                 <div className="mb-4 relative z-10">
                   <div className="text-6xl font-display font-bold leading-none mb-1">
-                    <AnimatedCounter target={svc.stat.val} suffix={svc.stat.suffix} trigger={active} />
+                    <AnimatedCounter
+                      target={svc.stat.val}
+                      suffix={svc.stat.suffix}
+                      trigger={active}
+                    />
                   </div>
                   <p className="text-xs text-white/50 uppercase tracking-widest">{svc.stat.lbl}</p>
                 </div>
@@ -285,7 +324,10 @@ export default function Services({
                       transition={{ delay: i * 0.09 + 0.25, duration: 0.3 }}
                       className="flex items-start gap-2.5"
                     >
-                      <Check className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: svc.accent }} />
+                      <Check
+                        className="w-3.5 h-3.5 flex-shrink-0 mt-0.5"
+                        style={{ color: svc.accent }}
+                      />
                       <span className="text-xs text-white/65 leading-relaxed">{f}</span>
                     </motion.div>
                   ))}
@@ -304,11 +346,13 @@ export default function Services({
         <div className="absolute bottom-5 left-0 right-0 flex justify-center pointer-events-none">
           <motion.div
             animate={{ y: [0, 5, 0] }}
-            transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}
-            className="flex flex-col items-center gap-1 text-slate-300"
+            transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}
+            className="flex flex-col items-center gap-1 text-black"
           >
-            <span className="text-[10px] tracking-widest uppercase">
-              {active < services.length - 1 ? `${services.length - 1 - active} more · scroll` : "scroll to continue"}
+            <span className="text-[10px] font-bold tracking-widest uppercase">
+              {active < services.length - 1
+                ? `${services.length - 1 - active} more · scroll`
+                : 'scroll to continue'}
             </span>
             <ChevronDown className="w-4 h-4" />
           </motion.div>
