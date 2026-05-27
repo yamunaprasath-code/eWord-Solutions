@@ -27,6 +27,16 @@
         width: 100%;
       }
     </style>
+    <!-- GitHub Pages SPA: restore path encoded by 404.html -->
+    <script>
+      (function () {
+        var p = window.location.search.slice(1);
+        if (p.startsWith('p=')) {
+          var path = decodeURIComponent(p.slice(2));
+          window.history.replaceState(null, null, '/' + path);
+        }
+      })();
+    </script>
     <script type="module" crossorigin src="/eWord-Solutions/assets/index-Cg8F2v4z.js"></script>
     <link rel="modulepreload" crossorigin href="/eWord-Solutions/assets/rolldown-runtime-BYbx6iT9.js">
     <link rel="modulepreload" crossorigin href="/eWord-Solutions/assets/vendor-motion-BubtLuRV.js">
