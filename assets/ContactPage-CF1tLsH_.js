@@ -1,0 +1,1 @@
+import{a as e}from"./vendor-motion-BubtLuRV.js";import{t}from"./MainLayout-DcBYX0XW.js";import{t as n}from"./contact-BFNM3qNs.js";var r=e();function i(){return(0,r.jsx)(t,{children:(0,r.jsx)(`div`,{className:`pt-[72px]`,children:(0,r.jsx)(n,{})})})}export{i as default};
