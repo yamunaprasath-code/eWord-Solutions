@@ -485,6 +485,38 @@ img {
   text-overflow: ellipsis;
 }
 
+/* ===== RANGE SLIDER – Calculator ===== */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #2563EB;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 6px rgba(37, 99, 235, 0.45);
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+input[type='range']::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.18);
+  transform: scale(1.1);
+}
+input[type='range']::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #2563EB;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 6px rgba(37, 99, 235, 0.45);
+  cursor: pointer;
+  transition: box-shadow 0.15s ease;
+}
+
 /* ===== GETTING STARTED – DARK HORIZONTAL TIMELINE ===== */
 .gs-section {
   padding: 100px 0;

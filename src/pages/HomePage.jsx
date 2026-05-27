@@ -5,6 +5,7 @@ import {
   Services,
   ValueProp,
   Differentiators,
+  RecordsCalculator,
   TargetAudience,
   GettingStarted,
   ToolsSection,
@@ -19,6 +20,7 @@ export default function HomePage() {
       <Hero />
       <EmotionalAppeal />
       <Services />
+      <RecordsCalculator />
       <ValueProp />
       <Differentiators />
       <TargetAudience />
